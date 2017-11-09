@@ -28,6 +28,7 @@ MCLF_HEADER_SIZE_V23 	= 96
 MCLF_TEXT_INFO_OFFSET 	= 128
 MCLF_TEXT_INFO_SIZE 	= 36
 MCLF_HEADER_SIZE 		= MCLF_TEXT_INFO_OFFSET + MCLF_TEXT_INFO_SIZE
+tlApiLibEntry           = 0x108C
 
 def accept_file(f, filename):
 	retval = 0
@@ -80,4 +81,7 @@ def load_file(f, neflags, format):
 	else:
 		idaapi.add_entry(entry, entry, "_entry", 1)
 		SetRegEx(entry, "T", 0x0, SR_user);
+
+	MakeDword(tlApiLibEntry)
+	MakeName(tlApiLibEntry,"tlApiLibEntry");
 	return 1
