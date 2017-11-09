@@ -76,7 +76,7 @@ def load_file(f, neflags, format):
 	if entry % 4 == 1: 
 		#Thumb address is always +1 to set the T bit
 		idaapi.add_entry(entry-1, entry-1, "_entry", 1)
-		SetRegEx(entry, "T", 0x1, SR_user);
+		SetRegEx(entry-1, "T", 0x1, SR_user);
 	else:
 		idaapi.add_entry(entry, entry, "_entry", 1)
 		SetRegEx(entry, "T", 0x0, SR_user);
