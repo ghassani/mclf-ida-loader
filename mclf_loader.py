@@ -29,15 +29,14 @@ MCLF_TEXT_INFO_OFFSET 	= 128
 MCLF_TEXT_INFO_SIZE 	= 36
 MCLF_HEADER_SIZE 		= MCLF_TEXT_INFO_OFFSET + MCLF_TEXT_INFO_SIZE
 
-def accept_file(f, n):
+def accept_file(f, filename):
 	retval = 0
-	if n == 0:
-		f.seek(0)
-		magic = f.read(4)
-		versionMinor = struct.unpack("<h", f.read(2))[0]
-		versionMajor = struct.unpack("<h", f.read(2))[0]
-		if magic == MCLF_HEADER_MAGIC and versionMajor > 1 and versionMajor < 3:
-			retval = "%s v%d.%d executable for ARM" % (magic, versionMajor, versionMinor)
+	f.seek(0)
+	magic = f.read(4)
+	versionMinor = struct.unpack("<h", f.read(2))[0]
+	versionMajor = struct.unpack("<h", f.read(2))[0]
+	if magic == MCLF_HEADER_MAGIC and versionMajor > 1 and versionMajor < 3:
+		retval = "%s v%d.%d executable for ARM" % (magic, versionMajor, versionMinor)
 	return retval
 
 def load_file(f, neflags, format):
