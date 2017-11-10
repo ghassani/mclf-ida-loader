@@ -32,12 +32,13 @@ tlApiLibEntry           = 0x108C
 
 def accept_file(f, filename):
 	retval = 0
-	f.seek(0)
-	magic = f.read(4)
-	versionMinor = struct.unpack("<h", f.read(2))[0]
-	versionMajor = struct.unpack("<h", f.read(2))[0]
-	if magic == MCLF_HEADER_MAGIC and versionMajor > 1 and versionMajor < 3:
-		retval = "%s v%d.%d executable for ARM" % (magic, versionMajor, versionMinor)
+	if filename == 0 or type(filename) == str:
+		f.seek(0)
+		magic = f.read(4)
+		versionMinor = struct.unpack("<h", f.read(2))[0]
+		versionMajor = struct.unpack("<h", f.read(2))[0]
+		if magic == MCLF_HEADER_MAGIC and versionMajor > 1 and versionMajor < 3:
+			retval = "%s v%d.%d executable for ARM" % (magic, versionMajor, versionMinor)
 	return retval
 
 def load_file(f, neflags, format):
