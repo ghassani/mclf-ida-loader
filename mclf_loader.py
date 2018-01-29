@@ -69,7 +69,7 @@ def load_file(f, neflags, format):
 	idaapi.add_segm(0, textVA, textVA + textLen, ".text", "CODE")
 
 	# Set VA for .data and add the segment
-	f.file2base(MCLF_HEADER_SIZE_V23 + textLen, dataVA, dataVA + dataLen, True)
+	f.file2base(textLen, dataVA, dataVA + dataLen, True)
 	idaapi.add_segm(0, dataVA, dataVA + dataLen, ".data", "DATA")
 	
 	# Add BSS segment after .text and .data
