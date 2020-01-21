@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 * This program is free software ; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,9 +20,12 @@
 '''
 import struct
 import idaapi
+import ida_idp
+import ida_bytes
+import ida_segregs
 from idc import *
 
-MCLF_HEADER_MAGIC 		= "MCLF"
+MCLF_HEADER_MAGIC 		= b"MCLF"
 MCLF_HEADER_SIZE_V1 	= 72
 MCLF_HEADER_SIZE_V2 	= 76
 MCLF_HEADER_SIZE_V23 	= 96
@@ -38,7 +42,7 @@ def accept_file(f, filename):
 		versionMinor = struct.unpack("<h", f.read(2))[0]
 		versionMajor = struct.unpack("<h", f.read(2))[0]
 		if magic == MCLF_HEADER_MAGIC and versionMajor > 1 and versionMajor < 3:
-			retval = "%s v%d.%d executable for ARM" % (magic, versionMajor, versionMinor)
+			retval = "%s v%d.%d executable for ARM" % (magic.decode('utf-8'), versionMajor, versionMinor)
 	return retval
 
 def load_file(f, neflags, format):
@@ -62,7 +66,7 @@ def load_file(f, neflags, format):
 
 	f.seek(MCLF_TEXT_INFO_OFFSET)
 	
-	idaapi.set_processor_type("arm", SETPROC_ALL)
+	idaapi.set_processor_type("arm", ida_idp.SETPROC_LOADER)
 
 	# Set VA for .text and add the segment
 	f.file2base(0, textVA, textVA + textLen, True)
@@ -78,11 +82,11 @@ def load_file(f, neflags, format):
 	if entry % 4 == 1: 
 		#Thumb address is always +1 to set the T bit
 		idaapi.add_entry(entry-1, entry-1, "_entry", 1)
-		SetRegEx(entry-1, "T", 0x1, SR_user);
+		split_sreg_range(entry-1, "T", 0x1, ida_segregs.SR_user)
 	else:
 		idaapi.add_entry(entry, entry, "_entry", 1)
-		SetRegEx(entry, "T", 0x0, SR_user);
+		split_sreg_range(entry, "T", 0x0, ida_segregs.SR_user)
 
-	MakeDword(tlApiLibEntry)
-	MakeName(tlApiLibEntry,"tlApiLibEntry");
+	ida_bytes.create_data(tlApiLibEntry, FF_DWORD, 4, ida_idaapi.BADADDR)
+	set_name(tlApiLibEntry,"tlApiLibEntry", SN_CHECK)
 	return 1
